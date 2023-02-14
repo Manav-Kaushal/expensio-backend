@@ -1,0 +1,36 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "Backend for expense tracker",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manav-Kaushal/expense-tracker.git"
+  },
+  "author": "Manav Kaushal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Manav-Kaushal/expense-tracker/issues"
+  },
+  "homepage": "https://github.com/Manav-Kaushal/expense-tracker#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cookie-parser": "^1.4.6",
+    "cookies-next": "^2.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.9.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "cors": "^2.8.5",
+    "nodemon": "^2.0.20"
+  }
+}
