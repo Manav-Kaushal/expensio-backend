@@ -6,9 +6,9 @@ async function restrictToLoggedInUserOnly(req, res, next) {
 
   if (!token) return res.status(401).send({ message: "No auth token found!" });
 
-  const { id } = jwt.decode(token, "secret@123#");
+  const { _id } = jwt.decode(token, "secret@123#");
 
-  const user = await User.findOne({ id });
+  const user = await User.findOne({ _id });
 
   req.user = user;
   next();

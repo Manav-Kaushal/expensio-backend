@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 // @desc: Register user
 // @route: POST /api/auth/register
 // @access: Public
 exports.createUser = async (req, res, next) => {
   const { name, password, email } = req.body;
-  console.log("test", { name, password, email });
 
   if (name && password && email) {
     const emailAlreadyExists = await User.findOne({ email: email });
@@ -17,10 +17,11 @@ exports.createUser = async (req, res, next) => {
       });
     }
     try {
+      const hashedPassword = await bcrypt.hash(password, "secret12345");
       const user = await User.create({
         name,
         email,
-        password,
+        password: hashedPassword,
       });
       if (user) {
         return res.status(200).json({
@@ -38,8 +39,8 @@ exports.createUser = async (req, res, next) => {
   }
 };
 
-// @desc: Add transactions
-// @route: POST /api/v1/transactions
+// @desc: Login user
+// @route: POST /api/login
 // @access: Public
 exports.loginUser = async (req, res, next) => {
   const { password, email } = req.body;
