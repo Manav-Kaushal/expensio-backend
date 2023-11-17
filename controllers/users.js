@@ -17,7 +17,8 @@ exports.createUser = async (req, res, next) => {
       });
     }
     try {
-      const hashedPassword = await bcrypt.hash(password, "secret12345");
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const user = await User.create({
         name,
         email,
@@ -31,7 +32,7 @@ exports.createUser = async (req, res, next) => {
     } catch (e) {
       return res.status(500).json({
         success: false,
-        message: "Server Error",
+        message: e?.message || "Server Error",
       });
     }
   } else {
@@ -45,43 +46,43 @@ exports.createUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   const { password, email } = req.body;
 
-  if (password && email) {
-    const emailExists = await User.findOne({ email });
+  if (!email || !password) {
+    return res.status(422).json({
+      message: "Please check the payload sent!",
+    });
+  }
+  try {
+    const user = await User.findOne({ email });
 
-    if (!emailExists) {
+    if (!user) {
       return res.status(404).json({
         message: "Email not found!",
       });
     }
 
-    try {
-      const user = await User.findOne({
-        email,
-        password,
-      });
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+
+    if (email === user.email && passwordsMatch) {
       const userData = {
         _id: user._id,
         name: user.name,
-        email: user.email,
+        email: user.name,
       };
-      if (user.email === email && user.password === password) {
-        const token = jwt.sign(userData, "someRandomSecret@123#");
-        return res.status(200).json({
-          message: "Logged in!",
-          token,
-          userData,
-        });
-      } else {
-        return res.status(401).json({
-          message: "Incorrect email or password!",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
-        message: error.message,
+      const token = jwt.sign(userData, "someRandomSecret@123#");
+      return res.status(200).json({
+        message: "Logged in!",
+        token,
+        userData,
+      });
+    } else {
+      return res.status(401).json({
+        message: "Incorrect email or password!",
       });
     }
-  } else {
-    res.status(422).json({ message: "Please check the payload sent!" });
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
